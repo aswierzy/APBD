@@ -14,4 +14,7 @@
       IsDeviceTurnedOn = false;
       Console.WriteLine("Device is off");
    }
+
+   public abstract string ToString();
+
 }
