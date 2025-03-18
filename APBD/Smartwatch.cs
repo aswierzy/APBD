@@ -2,26 +2,25 @@ namespace APBD;
 
 public class Smartwatch : Device,IPowerNotifier
 {
-    private int _battteryLevel;
+    private int _batteryLevel;
     public int BatteryLevel
     {
-        get
-        {
-            return _battteryLevel;
-        }
+        get => _batteryLevel;
+        
         set
         {
             if (value < 0 | value > 100)
             {
                 Console.WriteLine("Battery % ranges from 0 - 100");
             }
-            
-            _battteryLevel = value;
-            if (_battteryLevel < 20)
+            else
             {
-                Notify();
+                _batteryLevel = value;
+                if (_batteryLevel < 20)
+                {
+                    Notify();
+                }
             }
-            
         }
     }
     
