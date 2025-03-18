@@ -1,0 +1,21 @@
+# Rider-specific files
+.idea/
+*.sln.iml
+
+# Build output
+bin/
+obj/
+out/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.ide/
+
+# Logs
+logs/
+*.log
+
+# macOS system files
+.DS_Store
