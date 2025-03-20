@@ -4,12 +4,13 @@ public class DeviceManager
 {
     private string _filePath;
     private List<Device> _devices = new();
+    public List<Device> Devices => _devices; 
     
     public DeviceManager(string filePath)
     {
         _filePath = filePath;
 
-        if (!File.Exists(filePath))
+        if (!File.Exists(_filePath))
         {
             Console.WriteLine("File not found ");
         }
@@ -35,29 +36,26 @@ public class DeviceManager
             {
                 Device device = parts[0] switch
                 {
-                    string sw when sw.StartsWith("SW-") => new Smartwatch()
-                    {
-                        Id = ExtractId(parts[0]),
-                        Name = parts[1],
-                        IsDeviceTurnedOn = Boolean.Parse(parts[2]),
-                        BatteryLevel = int.Parse(parts[3].Replace("%", ""))
-                    },
+                    string sw when sw.StartsWith("SW-") => new Smartwatch(
+                        ExtractId(parts[0]), 
+                        parts[1], 
+                        Boolean.Parse(parts[2]), 
+                        int.Parse(parts[3].Replace("%", ""))
+                    )
+                   ,
                     
-                    string p when p.StartsWith("P-") => new PersonalComputer()
-                    {
-                        Id = ExtractId(parts[0]),
-                        Name = parts[1],
-                        IsDeviceTurnedOn = Boolean.Parse(parts[2]),
-                        OperatingSystem = parts[3] != null ? parts[3] : null
-                    },
+                    string p when p.StartsWith("P-") => new PersonalComputer(
+                        ExtractId(parts[0]), 
+                        parts[1], 
+                        Boolean.Parse(parts[2]), 
+                        parts.Length >= 4 ? parts[3] : null)
+                    ,
                     
-                    string ed when ed.StartsWith("ED-") => new EmbeddedDevice()
-                    {
-                        Id = ExtractId(parts[0]),
-                        Name = parts[1],
-                        IPAddress = parts[2],
-                        NetworkName = parts[3]
-                    }
+                    string ed when ed.StartsWith("ED-") => new EmbeddedDevice(
+                        ExtractId(parts[0]), 
+                        parts[1], 
+                        parts[2], 
+                        parts[3])
                 };
                 
                 _devices.Add(device);
@@ -74,6 +72,11 @@ public class DeviceManager
         return int.Parse(extractId[1]);
     }
 
+    public Device? GetDevice(Device device)
+    {
+        return _devices.FirstOrDefault(d => d.Equals(device));
+    }
+    
     public void AddDevice(Device device)
     {
         if (_devices.Count >= 15)
@@ -128,7 +131,7 @@ public class DeviceManager
         foreach (var device in _devices)
         {
             Console.WriteLine(device.ToString());
-            Console.WriteLine("=======================");
+            Console.WriteLine("=======");
         }
     }
     

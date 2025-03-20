@@ -14,12 +14,23 @@ public class EmbeddedDevice : Device
         {
             if (!_ipRegex.IsMatch(value))
             {
-                throw new ArgumentException($"Invalid IP address format: {value}");
+                //throw new ArgumentException($"Invalid IP address format: {value}");
+                _ipAddress = "Invalid IP Address";
             }
-            _ipAddress = value;
+            else
+            {
+                _ipAddress = value;
+
+            }
         }
     }
-
+    public EmbeddedDevice(int id, string name, string ipAddress, string network)
+    {
+        Id = id;
+        Name = name;
+        IPAddress = ipAddress;
+        NetworkName = network;
+    }
     public void Connect()
     {
         if (!NetworkName.Contains("MD Ltd."))
@@ -40,7 +51,7 @@ public class EmbeddedDevice : Device
     
     public override string ToString()
     {
-        return $"ID: {Id} /n Name: {Name} /n IP Address: {IPAddress} /n Network Name: {NetworkName}";
+        return $"ID: {Id} | Name: {Name} | IP Address: {IPAddress} | Network Name: {NetworkName}";
     }
 
     public override string SavingFormat()

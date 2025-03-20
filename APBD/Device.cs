@@ -15,6 +15,22 @@
       Console.WriteLine("Device is off");
    }
 
+   
+   public override bool Equals(object? obj)
+   {
+      if (obj is Device other)
+      {
+         return this.Id == other.Id && this.GetType() == other.GetType();
+      }
+      return false;
+   }
+
+   public override int GetHashCode()
+   {
+      return HashCode.Combine(Id, GetType());
+   }
+   
+   
    public abstract string ToString();
    public abstract string SavingFormat();
 

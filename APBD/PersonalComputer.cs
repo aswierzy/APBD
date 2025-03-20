@@ -4,6 +4,14 @@ public class PersonalComputer : Device
 {
     public string? OperatingSystem { get; set; }
 
+    public PersonalComputer(int id, string name, bool isTurnedOn, string operatingSystem)
+    {
+        Id = id;
+        Name = name;
+        IsDeviceTurnedOn = isTurnedOn;
+        OperatingSystem = operatingSystem;
+    }
+    
     public void InstallOs(string operatingSystemName)
     {   
         OperatingSystem = operatingSystemName;
@@ -26,7 +34,7 @@ public class PersonalComputer : Device
     
     public override string ToString()
     {
-        return $"ID: {Id} /n Name: {Name} /n Running: {IsDeviceTurnedOn} /n OS: {OperatingSystem}";
+        return $"ID: {Id} | Name: {Name} | Running: {IsDeviceTurnedOn} | OS: {OperatingSystem}";
     }
     public override string SavingFormat()
     {
