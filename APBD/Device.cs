@@ -7,12 +7,12 @@
    public void TurnOn()
    {
       IsDeviceTurnedOn = true;
-      Console.WriteLine("Device is on");
+      Console.WriteLine($"{Name} is on");
    }
    public void TurnOff()
    {
       IsDeviceTurnedOn = false;
-      Console.WriteLine("Device is off");
+      Console.WriteLine($"{Name} is off");
    }
 
    
