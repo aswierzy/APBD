@@ -40,6 +40,11 @@ public class EmbeddedDevice : Device
     
     public override string ToString()
     {
-        throw new NotImplementedException();
+        return $"ID: {Id} /n Name: {Name} /n IP Address: {IPAddress} /n Network Name: {NetworkName}";
+    }
+
+    public override string SavingFormat()
+    {
+        return $"ED-{Id},{Name},{IPAddress},{NetworkName}";
     }
 }

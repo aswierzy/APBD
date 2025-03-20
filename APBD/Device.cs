@@ -16,5 +16,6 @@
    }
 
    public abstract string ToString();
+   public abstract string SavingFormat();
 
 }

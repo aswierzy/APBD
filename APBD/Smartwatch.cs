@@ -43,6 +43,10 @@ public class Smartwatch : Device,IPowerNotifier
 
     public override string ToString()
     {
-        throw new NotImplementedException();
+        return $"ID: {Id} /n Name: {Name} /n Running: {IsDeviceTurnedOn} /n Battery Level: {_batteryLevel}";
+    }
+    public override string SavingFormat()
+    {
+        return $"SW-{Id},{Name},{IsDeviceTurnedOn},{_batteryLevel}%";
     }
 }

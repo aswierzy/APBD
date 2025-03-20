@@ -26,6 +26,10 @@ public class PersonalComputer : Device
     
     public override string ToString()
     {
-        throw new NotImplementedException();
+        return $"ID: {Id} /n Name: {Name} /n Running: {IsDeviceTurnedOn} /n OS: {OperatingSystem}";
+    }
+    public override string SavingFormat()
+    {
+        return $"P-{Id},{Name},{IsDeviceTurnedOn},{OperatingSystem}";
     }
 }
