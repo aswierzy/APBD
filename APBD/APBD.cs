@@ -6,30 +6,36 @@ public class APBD
     {
         var manager = new DeviceManager("devices.txt"); 
         manager.ShowAllDevices();
-        Smartwatch sw2 = new Smartwatch(2,"Apple Watch SE3",true,50);
+        Smartwatch sw2 = new Smartwatch("SW-2","Apple Watch SE3",true,50);
         manager.AddDevice(sw2);
         manager.ShowAllDevices();
         
-        var pc5 = new PersonalComputer(5, "Gaming PC", false,"Windows 11") ;
+        var pc5 = new PersonalComputer("P-5", "Gaming PC", false,"Windows 11") ;
         manager.AddDevice(pc5);
         
-        var ed7 = new EmbeddedDevice(7, "Raspberry Pi", "Invalid IP", "MD Ltd. WiFi") ;
-        manager.AddDevice(ed7);  
+        try
+        {
+            var ed7 = new EmbeddedDevice("ED-7", "Raspberry Pi", "Invalid IP", "MD Ltd. WiFi");
+            manager.AddDevice(ed7);  
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine($"Skipping device due to invalid IP: {ex.Message}");
+        }
+        
+        
+        manager.ShowAllDevices();
+
+        manager.EditDevice("SW-2", "BatteryPercentage", 75);
+
+        manager.TurnOnDevice("P-5"); 
+
+        manager.TurnOffDevice("SW-2"); 
+
+        manager.RemoveDevice("ED-7"); 
 
         manager.ShowAllDevices();
 
-        manager.EditDevice(sw2, "BatteryPercentage", 75);
-
-        manager.TurnOnDevice(pc5); 
-
-        manager.TurnOffDevice(sw2); 
-
-        manager.RemoveDevice(ed7); 
-
-        manager.ShowAllDevices();
-        
-        
-        // In the tests SaveDataToFile passes so I guess it's working but here I don't know why it won't save devices to the file
         manager.SaveDataToFile();
 
     }

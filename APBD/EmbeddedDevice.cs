@@ -7,6 +7,7 @@ public class EmbeddedDevice : Device
     public string NetworkName { get; set; }
     private Regex _ipRegex = new (@"^(?:\d{1,3}\.){3}\d{1,3}$");
     private string _ipAddress;
+    private bool _connected;
     public string IPAddress
     {
         get { return _ipAddress; }
@@ -14,8 +15,8 @@ public class EmbeddedDevice : Device
         {
             if (!_ipRegex.IsMatch(value))
             {
-                //throw new ArgumentException($"Invalid IP address format: {value}");
                 _ipAddress = "Invalid IP Address";
+                throw new ArgumentException($"Invalid IP address format: {value}");
             }
             else
             {
@@ -24,7 +25,7 @@ public class EmbeddedDevice : Device
             }
         }
     }
-    public EmbeddedDevice(int id, string name, string ipAddress, string network)
+    public EmbeddedDevice(string id, string name, string ipAddress, string network)
     {
         Id = id;
         Name = name;
@@ -35,14 +36,16 @@ public class EmbeddedDevice : Device
     {
         if (!NetworkName.Contains("MD Ltd."))
         {
+            _connected = false;
             throw new ConnectionException();
         }
 
+        _connected = true;
         Console.WriteLine($"{Name} successfully connected to {NetworkName}.");
         
     }
 
-    public void TurnOn()
+    public override void TurnOn()
     {
         Connect();
         base.TurnOn();
@@ -56,6 +59,6 @@ public class EmbeddedDevice : Device
 
     public override string SavingFormat()
     {
-        return $"ED-{Id},{Name},{IPAddress},{NetworkName}";
+        return $"{Id},{Name},{IPAddress},{NetworkName}";
     }
 }

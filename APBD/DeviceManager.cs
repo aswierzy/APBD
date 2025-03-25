@@ -32,49 +32,50 @@ public class DeviceManager
             }
 
             string[] parts = line.Split(",");
-            if (parts[0].Contains("SW") | parts[0].Contains("P") | parts[0].Contains("ED"))
+            Device device = parts[0] switch
             {
-                Device device = parts[0] switch
+                string sw when sw.StartsWith("SW-") => new Smartwatch(
+                    parts[0],
+                    parts[1],
+                    Boolean.Parse(parts[2]),
+                    int.Parse(parts[3].Replace("%", ""))
+                ),
+
+                string p when p.StartsWith("P-") => new PersonalComputer(
+                    parts[0],
+                    parts[1],
+                    Boolean.Parse(parts[2]),
+                    parts.Length >= 4 ? parts[3] : null),
+
+                string ed when ed.StartsWith("ED-") => CreateEmbeddedDeviceSafely(
+                    parts[0],
+                    parts[1],
+                    parts[2],
+                    parts[3])
+                ,
+                _ => null
+            };
+                if (device != null)
                 {
-                    string sw when sw.StartsWith("SW-") => new Smartwatch(
-                        ExtractId(parts[0]), 
-                        parts[1], 
-                        Boolean.Parse(parts[2]), 
-                        int.Parse(parts[3].Replace("%", ""))
-                    )
-                   ,
-                    
-                    string p when p.StartsWith("P-") => new PersonalComputer(
-                        ExtractId(parts[0]), 
-                        parts[1], 
-                        Boolean.Parse(parts[2]), 
-                        parts.Length >= 4 ? parts[3] : null)
-                    ,
-                    
-                    string ed when ed.StartsWith("ED-") => new EmbeddedDevice(
-                        ExtractId(parts[0]), 
-                        parts[1], 
-                        parts[2], 
-                        parts[3])
-                };
-                
-                _devices.Add(device);
-            }
-
-
+                    _devices.Add(device);
+                }
         }
-
-       
     }
-    private int ExtractId(string s)
+    private EmbeddedDevice? CreateEmbeddedDeviceSafely(string id, string name, string ip, string network)
     {
-        string[] extractId = s.Split("-");
-        return int.Parse(extractId[1]);
+        try
+        {
+            return new EmbeddedDevice(id, name, ip, network);
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine($"Skipping device due to invalid IP: {ex.Message}");
+            return null;
+        }
     }
-
-    public Device? GetDevice(Device device)
+    public Device? GetDevice(string id)
     {
-        return _devices.FirstOrDefault(d => d.Equals(device));
+        return _devices.FirstOrDefault(d => d.Id == id);
     }
     
     public void AddDevice(Device device)
@@ -88,14 +89,23 @@ public class DeviceManager
         Console.WriteLine($"{device.Name} added");
     }
 
-    public void RemoveDevice(Device device)
+    public void RemoveDevice(string id)
     {
+        var device = _devices.FirstOrDefault(d => d.Id == id);
+    
+        if (device == null)
+        {
+            Console.WriteLine($"Device with ID '{id}' not found.");
+            return;
+        }
+
         _devices.Remove(device);
-        Console.WriteLine($"{device.Name} was removed");
+        Console.WriteLine($"{device.Name} was removed.");
     }
 
-    public void EditDevice(Device device, string propertyName, object value)
+    public void EditDevice(string id, string propertyName, object value)
     {
+        Device device = _devices.FirstOrDefault(d => d.Id == id);
         var propInfo = device.GetType().GetProperty(propertyName);
         
         try
@@ -108,8 +118,9 @@ public class DeviceManager
             Console.WriteLine($"Error updating property: {ex.Message}");
         }
     }
-    public void TurnOnDevice(Device device)
+    public void TurnOnDevice(string id)
     {
+        Device device = _devices.FirstOrDefault(d => d.Id == id);
         try
         {
             device.TurnOn();
@@ -120,8 +131,9 @@ public class DeviceManager
         }
     }
 
-    public void TurnOffDevice(Device device)
+    public void TurnOffDevice(string id)
     {
+        Device device = _devices.FirstOrDefault(d => d.Id == id);
         device.TurnOff();
     }
     

@@ -11,7 +11,7 @@ public class Smartwatch : Device,IPowerNotifier
         {
             if (value < 0 | value > 100)
             {
-                Console.WriteLine("Battery % ranges from 0 - 100");
+                throw new ArgumentOutOfRangeException(nameof(BatteryLevel), "Battery percentage must be between 0 and 100.");
             }
             else
             {
@@ -25,7 +25,7 @@ public class Smartwatch : Device,IPowerNotifier
     }
 
 
-    public Smartwatch(int id, string name, bool isTurnedOn, int batteryLevel)
+    public Smartwatch(string id, string name, bool isTurnedOn, int batteryLevel)
     {
         Id = id;
         Name = name;
@@ -38,7 +38,7 @@ public class Smartwatch : Device,IPowerNotifier
         Console.WriteLine("Battery is less than 20%");
     }
 
-    public void TurnOn()
+    public override void TurnOn()
     {
         if (BatteryLevel < 11)
         {
@@ -56,6 +56,6 @@ public class Smartwatch : Device,IPowerNotifier
     }
     public override string SavingFormat()
     {
-        return $"SW-{Id},{Name},{IsDeviceTurnedOn},{_batteryLevel}%";
+        return $"{Id},{Name},{IsDeviceTurnedOn},{_batteryLevel}%";
     }
 }
