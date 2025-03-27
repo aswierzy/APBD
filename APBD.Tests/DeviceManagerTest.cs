@@ -15,7 +15,7 @@ public class DeviceManagerTest
     public DeviceManagerTest()
     {
         File.WriteAllText(testFilePath, "");
-        manager = new DeviceManager(testFilePath);
+        manager = DeviceManagerFactory.CreateDeviceManager(testFilePath);
     }
     
     [Fact]

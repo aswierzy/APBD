@@ -4,7 +4,8 @@ public class APBD
 {
     public static void Main()
     {
-        var manager = new DeviceManager("devices.txt"); 
+        var manager = DeviceManagerFactory.CreateDeviceManager("devices.txt");
+
         manager.ShowAllDevices();
         Smartwatch sw2 = new Smartwatch("SW-2","Apple Watch SE3",true,50);
         manager.AddDevice(sw2);

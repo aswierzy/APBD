@@ -4,11 +4,19 @@
    public string Name { get; set; }
    public bool IsDeviceTurnedOn { get; set; }
 
+   /// <summary>
+   /// Turns the device on.
+   /// </summary>
    public virtual void TurnOn()
    {
       IsDeviceTurnedOn = true;
       Console.WriteLine($"{Name} is on");
    }
+   
+   
+   /// <summary>
+   /// Turns the device off.
+   /// </summary>
    public virtual void TurnOff()
    {
       IsDeviceTurnedOn = false;
@@ -16,22 +24,14 @@
    }
 
    
-   // public override bool Equals(object? obj)
-   // {
-   //    if (obj is Device other)
-   //    {
-   //       return this.Id == other.Id && this.GetType() == other.GetType();
-   //    }
-   //    return false;
-   // }
-   //
-   // public override int GetHashCode()
-   // {
-   //    return HashCode.Combine(Id, GetType());
-   // }
-   
-   
+   /// <summary>
+   /// Returns a string representation of the device.
+   /// </summary>
    public abstract string ToString();
+   
+   /// <summary>
+   /// Returns the string format used for saving the device.
+   /// </summary>
    public abstract string SavingFormat();
 
 }

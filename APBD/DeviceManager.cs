@@ -5,11 +5,15 @@ public class DeviceManager
     private string _filePath;
     private List<Device> _devices = new();
     public List<Device> Devices => _devices; 
+    private readonly IDeviceFileService _fileService;
+    private readonly IDeviceFactory _deviceFactory;
     
-    public DeviceManager(string filePath)
+    public DeviceManager(string filePath, IDeviceFileService fileService, IDeviceFactory deviceFactory)
     {
         _filePath = filePath;
-
+        _fileService = fileService;
+        _deviceFactory = deviceFactory;
+        
         if (!File.Exists(_filePath))
         {
             Console.WriteLine("File not found ");
@@ -20,9 +24,13 @@ public class DeviceManager
         }
     }
 
+    
+    /// <summary>
+    /// Loads devices from the file.
+    /// </summary>
     private void LoadDevices()
     {
-        string[] lines = File.ReadAllLines(_filePath);
+        string[] lines = _fileService.ReadAllLines(_filePath).ToArray();
         foreach (var line in lines)
         {
             if (_devices.Count >= 15)
@@ -30,54 +38,25 @@ public class DeviceManager
                 Console.WriteLine("Limit of devices is 15");
                 break;
             }
-
-            string[] parts = line.Split(",");
-            Device device = parts[0] switch
+            var device = _deviceFactory.CreateDevice(line);
+            if (device != null)
             {
-                string sw when sw.StartsWith("SW-") => new Smartwatch(
-                    parts[0],
-                    parts[1],
-                    Boolean.Parse(parts[2]),
-                    int.Parse(parts[3].Replace("%", ""))
-                ),
-
-                string p when p.StartsWith("P-") => new PersonalComputer(
-                    parts[0],
-                    parts[1],
-                    Boolean.Parse(parts[2]),
-                    parts.Length >= 4 ? parts[3] : null),
-
-                string ed when ed.StartsWith("ED-") => CreateEmbeddedDeviceSafely(
-                    parts[0],
-                    parts[1],
-                    parts[2],
-                    parts[3])
-                ,
-                _ => null
-            };
-                if (device != null)
-                {
-                    _devices.Add(device);
-                }
+                _devices.Add(device);
+            }
         }
     }
-    private EmbeddedDevice? CreateEmbeddedDeviceSafely(string id, string name, string ip, string network)
-    {
-        try
-        {
-            return new EmbeddedDevice(id, name, ip, network);
-        }
-        catch (ArgumentException ex)
-        {
-            Console.WriteLine($"Skipping device due to invalid IP: {ex.Message}");
-            return null;
-        }
-    }
+    
+    /// <summary>
+    /// Gets a device by its ID.
+    /// </summary>
     public Device? GetDevice(string id)
     {
         return _devices.FirstOrDefault(d => d.Id == id);
     }
     
+    /// <summary>
+    /// Adds a new device.
+    /// </summary>
     public void AddDevice(Device device)
     {
         if (_devices.Count >= 15)
@@ -89,6 +68,9 @@ public class DeviceManager
         Console.WriteLine($"{device.Name} added");
     }
 
+    /// <summary>
+    /// Removes a device by its ID.
+    /// </summary>
     public void RemoveDevice(string id)
     {
         var device = _devices.FirstOrDefault(d => d.Id == id);
@@ -103,9 +85,17 @@ public class DeviceManager
         Console.WriteLine($"{device.Name} was removed.");
     }
 
+    /// <summary>
+    /// Edits a property of a device.
+    /// </summary>
     public void EditDevice(string id, string propertyName, object value)
     {
-        Device device = _devices.FirstOrDefault(d => d.Id == id);
+        var device = _devices.FirstOrDefault(d => d.Id == id);
+        if (device == null)
+        {
+            Console.WriteLine($"Device with ID '{id}' not found.");
+            return;
+        }
         var propInfo = device.GetType().GetProperty(propertyName);
         
         try
@@ -118,6 +108,10 @@ public class DeviceManager
             Console.WriteLine($"Error updating property: {ex.Message}");
         }
     }
+    
+    /// <summary>
+    /// Edits a property of a device.
+    /// </summary>
     public void TurnOnDevice(string id)
     {
         Device device = _devices.FirstOrDefault(d => d.Id == id);
@@ -131,13 +125,18 @@ public class DeviceManager
         }
     }
 
+    /// <summary>
+    /// Turns off a device by its ID.
+    /// </summary>
     public void TurnOffDevice(string id)
     {
         Device device = _devices.FirstOrDefault(d => d.Id == id);
         device.TurnOff();
     }
     
-    
+    /// <summary>
+    /// Displays all devices.
+    /// </summary>
     public void ShowAllDevices()
     {
         foreach (var device in _devices)
@@ -147,6 +146,10 @@ public class DeviceManager
         }
     }
     
+    
+    /// <summary>
+    /// Saves all devices to the file.
+    /// </summary>
     public void SaveDataToFile()
     {
         var lines = _devices.Select(device => device.SavingFormat());

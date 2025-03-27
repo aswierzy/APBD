@@ -3,6 +3,9 @@ namespace APBD;
 public class Smartwatch : Device,IPowerNotifier
 {
     private int _batteryLevel;
+    /// <summary>
+    /// Gets or sets the battery level.
+    /// </summary>
     public int BatteryLevel
     {
         get => _batteryLevel;
@@ -33,11 +36,17 @@ public class Smartwatch : Device,IPowerNotifier
         BatteryLevel = batteryLevel;
     }
     
+    /// <summary>
+    /// Notifies if battery level is low.
+    /// </summary>
     public  void Notify()
     {
         Console.WriteLine("Battery is less than 20%");
     }
 
+    /// <summary>
+    /// Turns the device on. Throws an exception if battery is too low.
+    /// </summary>
     public override void TurnOn()
     {
         if (BatteryLevel < 11)
@@ -50,10 +59,17 @@ public class Smartwatch : Device,IPowerNotifier
         Console.WriteLine("Current battery level: " + BatteryLevel + "%");
     }
 
+    /// <summary>
+    /// Returns a string representation of the smartwatch.
+    /// </summary>
     public override string ToString()
     {
         return $"ID: {Id} | Name: {Name} | Running: {IsDeviceTurnedOn} | Battery Level: {_batteryLevel}";
     }
+    
+    /// <summary>
+    /// Returns the saving format of the smartwatch.
+    /// </summary>
     public override string SavingFormat()
     {
         return $"{Id},{Name},{IsDeviceTurnedOn},{_batteryLevel}%";
